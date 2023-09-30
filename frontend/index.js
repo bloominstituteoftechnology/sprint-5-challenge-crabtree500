@@ -24,26 +24,10 @@ const url2 = 'http://localhost:3003/api/mentors';
       console.error('Error:', error);
     });
  
-    function renderLearnerCards(data1, data2) {
-    
    
-    const matches = {};
-    data1.forEach((learner) => {
-      const { id, fullName, email, mentors } = learner;
-      const matchingMentor = data2.find((mentor) => mentor.id === id);
-      if (matchingMentor) {
-        matches[id] = { id: matchingMentor, mentor: matchingMentor.firstName }; 
-        
-      createLearnerCard(fullName, email, mentors)
-      
-    }
-  });
-  }
 
   
-  function createLearnerCard(fullName, email, mentors) {
-    const cardContainer = document.querySelector('.cards');
-    cardContainer.appendChild(card);
+  function createLearnerCard(fullName, email, mentorNames) {
     
     const infoElement = document.querySelector('.info'); 
     const card = document.createElement('div');
@@ -57,6 +41,7 @@ const url2 = 'http://localhost:3003/api/mentors';
         infoElement.textContent = 'No Learner Selected';
       }
     });
+    
 
   const nameElement = document.createElement('h3');
   nameElement.classList.add('name');
@@ -70,24 +55,69 @@ const url2 = 'http://localhost:3003/api/mentors';
 
   const mentorsElement = document.createElement('h4');
   mentorsElement.classList.add('closed');
-  mentorsElement.textContent = mentors;
+  mentorsElement.textContent = 'Mentors:';
+  card.appendChild(mentorsElement);
+  mentorsElement.style.cursor = 'pointer';
 
-  mentorsElement.addEventListener('click', () => {
-    mentorsElement.classList.toggle('open');
+  mentorsElement.addEventListener('click', (event) => {
+     mentorsElement.classList.toggle('open');
+    mentorsElement.classList.toggle('closed');
+    event.stopPropagation();
+    
+  });
+  card.addEventListener('click', () => {
+      
+      const allCards = document.querySelectorAll('.card');
+      allCards.forEach((otherCard) => {
+        if (otherCard !== card) {
+          otherCard.classList.remove('selected');
+        }
+      });
+    })
+      card.classList.toggle('selected');
+      const mentorsList = document.createElement('ul');
+  card.appendChild(mentorsList);
+
+  mentorNames.forEach((mentorName) => {
+    const mentorListItem = document.createElement('li');
+    mentorListItem.textContent = mentorName;
+    mentorsList.appendChild(mentorListItem);
   });
 
-  card.appendChild(mentorsElement)
-  const listElement = document.createElement('ul');
-  card.appendChild(listElement);
-  
   return card;
 }
-  
 
+function renderLearnerCards(learners, mentors) {
+  const matches = {};
+
+  learners.forEach((learner) => {
+    const { id, fullName, email, mentors: mentorIds } = learner;
+
+    const mentorNames = mentorIds.map((mentorId) => {
+      const matchingMentor = mentors.find((mentor) => mentor.id === mentorId);
+      if (matchingMentor) {
+        return `${matchingMentor.firstName} ${matchingMentor.lastName}`;
+      } else {
+        return 'Unknown Mentor';
+      }
+    });
+
+    matches[id] = mentorNames; 
+
+    const card = createLearnerCard(fullName, email, mentorNames);
+    const cardContainer = document.querySelector('.cards');
+    cardContainer.appendChild(card);
+  });
+
+  return matches; 
+}
+
+
+
+}
  
   // 👆 WORK WORK ABOVE THIS LINE 👆
 
- }
 // ❗ DO NOT CHANGE THE CODE  BELOW
  if (typeof module !== 'undefined' && module.exports) module.exports = { sprintChallenge5 }
  else sprintChallenge5()
