@@ -28,17 +28,15 @@ const url2 = 'http://localhost:3003/api/mentors';
 
   
   function createLearnerCard(fullName, email, mentorNames) {
-    
     const infoElement = document.querySelector('.info'); 
     const card = document.createElement('div');
     card.classList.add('card');
-
-    card.addEventListener('click', () => {
+    card.addEventListener('click', function()  {
       card.classList.toggle('selected');
       if (card.classList.contains('selected')) {
-        infoElement.textContent = `The Selected Learner is ${fullName}`;
+        infoElement.textContent = `The Selected Learner is ${fullName}`; nameElement.textContent = `${fullName}, ID ${this.id}` 
       } else {
-        infoElement.textContent = 'No Learner Selected';
+        infoElement.textContent = 'No Learner Selected'; nameElement.textContent = `${fullName}`;
       }
     });
     
